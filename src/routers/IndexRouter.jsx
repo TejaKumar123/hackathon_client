@@ -3,7 +3,7 @@ import Home from "../pages/Home"
 import Login from "../components/login/Login";
 import NotFound from "../pages/NotFound";
 import Signup from "../components/signup/Signup";
-
+import { ToastContainer } from "react-toastify";
 
 const IndexRouter = () => {
 	return (
@@ -14,6 +14,7 @@ const IndexRouter = () => {
 				<Route path="signup" element={<Signup />} />
 				<Route path="*" element={<NotFound />} />
 			</Routes>
+			<ToastContainer theme="dark" />
 		</>
 	)
 }

@@ -13,5 +13,44 @@ const userSlice = createSlice({
 	}
 })
 
+const signup = createAsyncThunk("user/signup", async (data, thunkApi) => {
+	try {
+		let res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/register`, data);
+		if (res?.data?.status == "ok") {
+			return thunkApi.fulfillWithValue(res?.data);
+		}
+		else {
+			return thunkApi.rejectWithValue(res?.data);
+		}
+	}
+	catch (err) {
+		return thunkApi.rejectWithValue({
+			status: "error",
+			message: "error occured while signup",
+			error: err,
+		})
+	}
+})
+
+const login = createAsyncThunk("user/login", async (data, thunkApi) => {
+	try {
+		let res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, data);
+		if (res?.data?.status == "ok") {
+			return thunkApi.fulfillWithValue(res?.data);
+		}
+		else {
+			return thunkApi.rejectWithValue(res?.data);
+		}
+	}
+	catch (err) {
+		return thunkApi.rejectWithValue({
+			status: "error",
+			message: "error while login",
+			error: err,
+		})
+	}
+})
+
+export { signup, login };
 export const { setUser } = userSlice.actions;
 export default userSlice.reducer;
