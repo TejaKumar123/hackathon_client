@@ -18,21 +18,49 @@ const Login = () => {
 	const { user } = useSelector(state => state.user);
 	const [cookies, setCookie, removeCookie] = useCookies();
 
+	// const normalLogin = async (data) => {
+	// 	/* alert(JSON.stringify(data)); */
+	// 	data.type = "normal"
+	// 	dispatch(login(data)).then((action) => {
+	// 		if (action?.payload?.status == "ok" && action?.payload?.data?.token && action?.payload?.data?.user) {
+	// 			dispatch(setUser(action?.payload?.data?.user));
+	// 			setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });
+	// 			toast.success(action?.payload?.message);
+	// 		}
+	// 		else {
+	// 			toast.error(action?.payload?.message);
+	// 		}
+	// 	})
+	// }
+
+	// const googleLogin = async (response) => {
+	// 	response.type = "google"
+	// 	dispatch(login(response)).then((action) => {
+	// 		if (action?.payload?.status == "ok" && action?.payload?.data?.token && action?.payload?.data?.user) {
+	// 			dispatch(setUser(action?.payload?.data?.user));
+	// 			setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });
+	// 			toast.success(action?.payload?.message);
+	// 		}
+	// 		else {
+	// 			toast.error(action?.payload?.message);
+	// 		}
+	// 	})
+	// }
 	const normalLogin = async (data) => {
-		/* alert(JSON.stringify(data)); */
 		data.type = "normal"
 		dispatch(login(data)).then((action) => {
 			if (action?.payload?.status == "ok" && action?.payload?.data?.token && action?.payload?.data?.user) {
 				dispatch(setUser(action?.payload?.data?.user));
 				setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });
 				toast.success(action?.payload?.message);
+				navigate('/dashboard'); // Add this line
 			}
 			else {
 				toast.error(action?.payload?.message);
 			}
 		})
 	}
-
+	
 	const googleLogin = async (response) => {
 		response.type = "google"
 		dispatch(login(response)).then((action) => {
@@ -40,13 +68,13 @@ const Login = () => {
 				dispatch(setUser(action?.payload?.data?.user));
 				setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });
 				toast.success(action?.payload?.message);
+				navigate('/dashboard'); // Add this line
 			}
 			else {
 				toast.error(action?.payload?.message);
 			}
 		})
 	}
-
 	const GoogleLogin = useGoogleLogin({
 		onSuccess: googleLogin,
 		onError: () => console.log("err"),

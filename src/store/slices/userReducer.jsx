@@ -1,17 +1,31 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import axios from "axios";
 
-const userSlice = createSlice({
-	name: "user",
-	initialState: {
+// const userSlice = createSlice({
+// 	name: "user",
+// 	initialState: {
 
-	},
-	reducers: {
-		setUser: (state, action) => {
-			state.user = action.payload;
-		}
-	}
-})
+// 	},
+// 	reducers: {
+// 		setUser: (state, action) => {
+// 			state.user = action.payload;
+// 		}
+// 	}
+// })
+const userSlice = createSlice({
+    name: "user",
+    initialState: {
+        user: null
+    },
+    reducers: {
+        setUser: (state, action) => {
+            state.user = action.payload;
+        },
+        clearUser: (state) => {  // Add this reducer
+            state.user = null;
+        }
+    }
+});
 
 const signup = createAsyncThunk("user/signup", async (data, thunkApi) => {
 	try {
@@ -51,6 +65,9 @@ const login = createAsyncThunk("user/login", async (data, thunkApi) => {
 	}
 })
 
+// export { signup, login };
+// export const { setUser } = userSlice.actions;
+// export default userSlice.reducer;
 export { signup, login };
-export const { setUser } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions; // Export clearUser
 export default userSlice.reducer;
