@@ -35,7 +35,7 @@ const Login = () => {
 
 	const googleLogin = async (response) => {
 		response.type = "google"
-		dispatch(login(data)).then((action) => {
+		dispatch(login(response)).then((action) => {
 			if (action?.payload?.status == "ok" && action?.payload?.data?.token && action?.payload?.data?.user) {
 				dispatch(setUser(action?.payload?.data?.user));
 				setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });

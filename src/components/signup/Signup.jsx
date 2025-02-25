@@ -37,7 +37,7 @@ const Signup = () => {
 	const googleSignup = async (response) => {
 		//alert(JSON.stringify(response));
 		response.type = "google"
-		dispatch(signup(data)).then((action) => {
+		dispatch(signup(response)).then((action) => {
 			if (action?.payload?.status == "ok" && action?.payload?.data?.token && action?.payload?.data?.user) {
 				dispatch(setUser(action?.payload?.data?.user));
 				setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });
