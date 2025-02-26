@@ -1,13 +1,15 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useCookies } from "react-cookie";
 import {
     AccountCircle, Logout, Group, Event, School,
     Campaign, Forum, Work
 } from "@mui/icons-material";
+import { setUser } from "../../store/slices/userReducer";
 
 const Sidebar = () => {
 
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user } = useSelector(state => state.user); // Fetch user from Redux
     const [cookies, setCookie, removeCookie] = useCookies(["hackathon_token"]);
@@ -15,6 +17,8 @@ const Sidebar = () => {
     const handleLogout = () => {
         removeCookie("hackathon_token", { path: "/" }); // Remove token from cookies
         navigate("/login");
+        dispatch(setUser(false));
+
     };
 
 
