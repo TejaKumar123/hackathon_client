@@ -31,7 +31,7 @@ const Sidebar = () => {
                     className="w-12 h-12 rounded-full border-2 border-white"
                 />
                 <div>
-                    <h3 className="text-lg font-semibold">{user?.name || "User"}</h3>
+                    <h3 className="text-lg font-semibold">Welcome {user?.name || "User"}</h3>
                     <p className="text-sm text-gray-400">{user?.role || "Faculty"}</p>
                 </div>
             </div>
