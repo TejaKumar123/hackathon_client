@@ -62,7 +62,7 @@ const IndexRouter = () => {
                 )}
 
 
-                {cookies.hackthon_token && user?.role === "faculty" && (
+                {cookies.hackathon_token && user?.role === "faculty" && (
                     <Route path="/" element={<FacultyDashboard />} >
                         <Route path="" element={<FacultyHome />} />
                         <Route path="announcements" element={<FacultyAnnouncements />} />
@@ -73,15 +73,15 @@ const IndexRouter = () => {
                 )}
 
 
-                {cookies.hackthon_token && user?.role === "alumni" && (
+                {cookies.hackathon_token && user?.role === "alumni" && (
                     <Route path="/" element={<AlumniDashboard />} />
                 )}
 
-                {cookies.hackthon_token && user?.role === "admin" && (
+                {cookies.hackathon_token && user?.role === "admin" && (
                     <Route path="/" element={<AdminDashboard />} />
                 )}
 
-                {cookies.hackthon_token && user?.role === "club_coordinator" && (
+                {cookies.hackathon_token && user?.role === "club_coordinator" && (
                     <Route path="/" element={<ClubCoordinatorDashboard />} />
                 )}
 
