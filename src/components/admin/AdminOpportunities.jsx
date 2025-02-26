@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 
+// Dummy opportunity data (used as initial data)
 const dummyOpportunities = [
 	{
 		_id: "1",
@@ -28,55 +28,103 @@ const dummyOpportunities = [
 		deadline: "2024-03-20",
 		status: "Open",
 	},
-	{
-		_id: "3",
-		title: "Data Science Internship",
-		type: "Internship",
-		company: "Microsoft",
-		location: "Hybrid",
-		description: "Work on real-time data analytics and predictive models.",
-		requirements: ["SQL", "Python", "TensorFlow"],
-		stipend: "$1800/month",
-		applyLink: "https://careers.microsoft.com",
-		deadline: "2024-03-10",
-		status: "Closed",
-	},
 ];
 
 const AdminOpportunities = () => {
 	const [opportunities, setOpportunities] = useState([]);
 	const [selectedType, setSelectedType] = useState("All");
+	const [newOpportunity, setNewOpportunity] = useState({
+		title: "",
+		type: "Internship",
+		company: "",
+		location: "",
+		description: "",
+		requirements: "",
+		stipend: "",
+		applyLink: "",
+		deadline: "",
+		status: "Open",
+	});
+	const [editingOpportunity, setEditingOpportunity] = useState(null);
 
 	useEffect(() => {
-		const fetchOpportunities = async () => {
-			try {
-				const response = await axios.post("http://localhost:5000/opportunity/", { criteria: {}, projection: {} });
-				setOpportunities(response.data);
-			} catch (error) {
-				console.error("Error fetching opportunities:", error);
-				setOpportunities(dummyOpportunities);
-			}
-		};
-		fetchOpportunities();
+		// Simulating API fetch
+		setOpportunities(dummyOpportunities);
 	}, []);
 
-	// Filter opportunities based on type
-	const filteredOpportunities = selectedType === "All"
-		? opportunities
-		: opportunities.filter(opportunity => opportunity.type === selectedType);
+	// Add a new opportunity
+	const addOpportunity = () => {
+		if (!newOpportunity.title || !newOpportunity.company) {
+			alert("Title and company are required!");
+			return;
+		}
+
+		const newEntry = {
+			...newOpportunity,
+			_id: String(Date.now()), // Generate a unique ID
+			requirements: newOpportunity.requirements.split(",").map((r) => r.trim()), // Convert string to array
+		};
+
+		setOpportunities([...opportunities, newEntry]);
+		setNewOpportunity({
+			title: "",
+			type: "Internship",
+			company: "",
+			location: "",
+			description: "",
+			requirements: "",
+			stipend: "",
+			applyLink: "",
+			deadline: "",
+			status: "Open",
+		});
+	};
+
+	// Edit an opportunity
+	const updateOpportunity = () => {
+		if (!editingOpportunity.title || !editingOpportunity.company) {
+			alert("Title and company are required!");
+			return;
+		}
+
+		setOpportunities(
+			opportunities.map((opp) =>
+				opp._id === editingOpportunity._id ? editingOpportunity : opp
+			)
+		);
+		setEditingOpportunity(null);
+	};
+
+	// Delete an opportunity
+	const deleteOpportunity = (id) => {
+		setOpportunities(opportunities.filter((opp) => opp._id !== id));
+	};
+
+	// Handle input changes
+	const handleInputChange = (e, isEditing = false) => {
+		const { name, value } = e.target;
+		if (isEditing) {
+			setEditingOpportunity((prev) => ({ ...prev, [name]: value }));
+		} else {
+			setNewOpportunity((prev) => ({ ...prev, [name]: value }));
+		}
+	};
+
+	const filteredOpportunities =
+		selectedType === "All"
+			? opportunities
+			: opportunities.filter((opportunity) => opportunity.type === selectedType);
 
 	return (
 		<div className="p-6">
 			<h2 className="text-3xl font-bold mb-4">Opportunities</h2>
 
-			{/* Type Filters */}
+			{/* Filter Buttons */}
 			<div className="flex space-x-4 mb-6">
-				{["All", "Internship", "Job"].map(type => (
+				{["All", "Internship", "Job"].map((type) => (
 					<button
 						key={type}
-						className={`px-4 py-2 rounded ${selectedType === type
-							? "bg-blue-600 text-white"
-							: "bg-gray-200 text-gray-800"
+						className={`px-4 py-2 rounded ${selectedType === type ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"
 							}`}
 						onClick={() => setSelectedType(type)}
 					>
@@ -85,40 +133,84 @@ const AdminOpportunities = () => {
 				))}
 			</div>
 
-			{/* Opportunities List */}
+			{/* Form to add or edit opportunities */}
+			<div className="bg-gray-100 p-4 rounded mb-6">
+				<h3 className="text-lg font-bold mb-2">{editingOpportunity ? "Edit Opportunity" : "Add New Opportunity"}</h3>
+				<div className="grid grid-cols-2 gap-4">
+					<input
+						type="text"
+						name="title"
+						placeholder="Title"
+						value={editingOpportunity ? editingOpportunity.title : newOpportunity.title}
+						onChange={(e) => handleInputChange(e, !!editingOpportunity)}
+						className="border p-2 rounded"
+					/>
+					<input
+						type="text"
+						name="company"
+						placeholder="Company"
+						value={editingOpportunity ? editingOpportunity.company : newOpportunity.company}
+						onChange={(e) => handleInputChange(e, !!editingOpportunity)}
+						className="border p-2 rounded"
+					/>
+					<input
+						type="text"
+						name="location"
+						placeholder="Location"
+						value={editingOpportunity ? editingOpportunity.location : newOpportunity.location}
+						onChange={(e) => handleInputChange(e, !!editingOpportunity)}
+						className="border p-2 rounded"
+					/>
+					<input
+						type="text"
+						name="stipend"
+						placeholder="Stipend"
+						value={editingOpportunity ? editingOpportunity.stipend : newOpportunity.stipend}
+						onChange={(e) => handleInputChange(e, !!editingOpportunity)}
+						className="border p-2 rounded"
+					/>
+					<input
+						type="text"
+						name="applyLink"
+						placeholder="Apply Link"
+						value={editingOpportunity ? editingOpportunity.applyLink : newOpportunity.applyLink}
+						onChange={(e) => handleInputChange(e, !!editingOpportunity)}
+						className="border p-2 rounded"
+					/>
+					<input
+						type="date"
+						name="deadline"
+						value={editingOpportunity ? editingOpportunity.deadline : newOpportunity.deadline}
+						onChange={(e) => handleInputChange(e, !!editingOpportunity)}
+						className="border p-2 rounded"
+					/>
+				</div>
+				{editingOpportunity ? (
+					<button onClick={updateOpportunity} className="mt-3 px-4 py-2 bg-yellow-500 text-white rounded">
+						Update
+					</button>
+				) : (
+					<button onClick={addOpportunity} className="mt-3 px-4 py-2 bg-green-500 text-white rounded">
+						Add
+					</button>
+				)}
+			</div>
+
+			{/* List of Opportunities */}
 			<div className="space-y-6">
 				{filteredOpportunities.map((opportunity) => (
 					<div key={opportunity._id} className="bg-white shadow-md rounded-lg p-4">
 						<h3 className="text-xl font-semibold">{opportunity.title}</h3>
-						<p className="text-gray-700">
-							<span className="font-medium">Company:</span> {opportunity.company}
-						</p>
-						<p className="text-gray-700">
-							<span className="font-medium">Location:</span> {opportunity.location}
-						</p>
+						<p className="text-gray-700"><span className="font-medium">Company:</span> {opportunity.company}</p>
+						<p className="text-gray-700"><span className="font-medium">Location:</span> {opportunity.location}</p>
 						<p className="text-gray-600">{opportunity.description}</p>
+						<p className="mt-2 text-gray-500"><span className="font-medium">Stipend:</span> {opportunity.stipend}</p>
+						<p className="text-sm text-gray-500 mt-2">Deadline: {new Date(opportunity.deadline).toLocaleDateString()}</p>
 
-						<p className="mt-2 text-gray-500">
-							<span className="font-medium">Requirements:</span> {opportunity.requirements.join(", ")}
-						</p>
-						<p className="mt-1 text-gray-500">
-							<span className="font-medium">Stipend:</span> {opportunity.stipend}
-						</p>
-
-						<p className="text-sm text-gray-500 mt-2">
-							Deadline: {new Date(opportunity.deadline).toLocaleDateString()}
-						</p>
-
-						<span className={`inline-block mt-3 px-3 py-1 rounded-full text-sm font-medium ${opportunity.status === "Open" ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"
-							}`}>
-							{opportunity.status}
-						</span>
-
-						<a href={opportunity.applyLink} target="_blank" rel="noopener noreferrer">
-							<button className="mt-3 px-4 py-2 bg-blue-500 text-white rounded">
-								Apply Now
-							</button>
-						</a>
+						<div className="mt-3 space-x-2">
+							<button onClick={() => setEditingOpportunity(opportunity)} className="px-4 py-2 bg-yellow-500 text-white rounded">Edit</button>
+							<button onClick={() => deleteOpportunity(opportunity._id)} className="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+						</div>
 					</div>
 				))}
 			</div>

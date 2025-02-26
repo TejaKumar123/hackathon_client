@@ -114,6 +114,7 @@ const IndexRouter = () => {
                 )}
 
 
+
                 {cookies.hackathon_token && user?.role === "club_coordinator" && (
                     <Route path="/" element={<ClubCoordinatorDashboard />} />
                 )}
