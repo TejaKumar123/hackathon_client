@@ -55,17 +55,7 @@ const IndexRouter = () => {
                         <Route path="opportunities" element={<Opportunities />} />
                     </Route>
                 )}
-                <Route path="/" element={<StudentDashboard />}>
-                    <Route path="" element={<StudentHome />} />
-                    <Route path="profile" element={<Profile />} />
-                    {/* <Route path="settings" element={<Settings />} /> */}
-                    <Route path="clubs" element={<Clubs />} />
-                    <Route path="events" element={<Events />} />
-                    <Route path="alumni" element={<Alumni />} />
-                    <Route path="announcements" element={<Announcements />} />
-                    <Route path="discussions" element={<Discussions />} />
-                    <Route path="opportunities" element={<Opportunities />} />
-                </Route>
+
 
                 {cookies.hackthon_token && user?.role === "faculty" && (
                     <Route path="/" element={<FacultyDashboard />} />

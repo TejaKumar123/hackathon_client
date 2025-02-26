@@ -78,7 +78,7 @@ const Home = () => {
                                 className="h-12 w-auto"
                             />
                             <span className={`ml-2 text-xl font-bold ${scrolled ? 'text-[black]' : 'text-[white]'}`}>
-                                RGUKT Connect
+                                RGUKT RKV Connect
                             </span>
                         </div>
 
@@ -154,7 +154,7 @@ const Home = () => {
                 </div>
                 <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
                     <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
-                        Welcome to RGUKT Connect
+                        Welcome to RGUKT RKV Connect
                     </h1>
                     <p className="mt-6 text-xl text-gray-300 max-w-3xl">
                         Your comprehensive platform for academic discussions, club activities,
