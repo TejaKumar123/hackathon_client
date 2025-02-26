@@ -23,11 +23,17 @@ import Alumni from "../components/student/Alumni";
 import Announcements from "../components/student/Announcements";
 import Discussions from "../components/student/Discussions";
 import Opportunities from "../components/student/Opportunities";
+
 import FacultyHome from "../components/faculty/FacultyHome";
 import FacultyAnnouncements from "../components/faculty/FacultyAnnouncements";
 import FacultyProfile from "../components/faculty/FacultyProfile";
 import FacultyDiscussions from "../components/faculty/FacultyDiscussions";
 import FacultyEvents from "../components/faculty/FacultyEvents";
+import AlumniHome from "../components/alumni/AlumniHome";
+import AlumniProfile from "../components/alumni/AlumniProfile";
+import AlumniAlumni from "../components/alumni/AlumniAlumni";
+import AlumniOpportunities from "../components/alumni/AlumniOpportunities";
+import AlumniDiscussions from "../components/alumni/AlumniDiscussions";
 
 
 const IndexRouter = () => {
@@ -76,6 +82,14 @@ const IndexRouter = () => {
                 {cookies.hackathon_token && user?.role === "alumni" && (
                     <Route path="/" element={<AlumniDashboard />} />
                 )}
+
+                <Route path="/alumni" element={<AlumniDashboard />} >
+                    <Route path="" element={<AlumniHome />} />
+                    <Route path="profile" element={<AlumniProfile />} />
+                    <Route path="alumni" element={<AlumniAlumni />} />
+                    <Route path="opportunities" element={<AlumniOpportunities />} />
+                    <Route path="discussions" element={<AlumniDiscussions />} />
+                </Route>
 
                 {cookies.hackathon_token && user?.role === "admin" && (
                     <Route path="/" element={<AdminDashboard />} />
