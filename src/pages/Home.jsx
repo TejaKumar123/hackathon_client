@@ -40,6 +40,46 @@ const Home = () => {
             title: "Resource Sharing",
             description: "Access and share academic resources and study materials",
             icon: "📚"
+        },
+        {
+            "title": "Career & Internships",
+            "description": "Explore job and internship opportunities to advance your career",
+            "icon": "💼"
+        },
+        {
+            "title": "Tech & Innovation",
+            "description": "Discuss the latest trends in technology and innovation",
+            "icon": "🚀"
+        },
+        {
+            "title": "Sports & Fitness",
+            "description": "Engage in discussions about sports, fitness, and wellness",
+            "icon": "🏅"
+        },
+        {
+            "title": "Social Initiatives",
+            "description": "Participate in community service and social impact programs",
+            "icon": "🌍"
+        },
+        {
+            "title": "Alumni Network",
+            "description": "Connect with university alumni for guidance and networking",
+            "icon": "🤝"
+        },
+        {
+            "title": "Hobbies & Interests",
+            "description": "Share and explore hobbies, from music to photography",
+            "icon": "🎨"
+        },
+        {
+            "title": "Research & Projects",
+            "description": "Collaborate on academic and industry research projects",
+            "icon": "🔬"
+        },
+        {
+            "title": "Workshops & Webinars",
+            "description": "Attend and discuss workshops, webinars, and training sessions",
+            "icon": "🖥️"
         }
     ];
 
@@ -61,6 +101,48 @@ const Home = () => {
             date: "25th March 2024",
             description: "International Research Symposium on Emerging Technologies",
             image: "/images/features/feature3.jpeg"
+        },
+        {
+            "title": "Hackathon Challenge",
+            "date": "5th April 2024",
+            "description": "24-hour coding competition to solve real-world problems",
+            "image": "/images/features/feature4.jpg"
+        },
+        {
+            "title": "Entrepreneurship Summit",
+            "date": "10th April 2024",
+            "description": "Networking and startup pitching event for aspiring entrepreneurs",
+            "image": "/images/features/feature5.jpg"
+        },
+        {
+            "title": "AI & Robotics Expo",
+            "date": "18th April 2024",
+            "description": "Showcase of innovative AI and robotics projects by students",
+            "image": "/images/features/feature7.jpg"
+        },
+        {
+            "title": "Sports Meet",
+            "date": "25th April 2024",
+            "description": "Annual university sports competition across multiple disciplines",
+            "image": "/images/features/feature6.jpg"
+        },
+        {
+            "title": "Literary Fest",
+            "date": "30th April 2024",
+            "description": "A festival celebrating literature, debates, and poetry recitations",
+            "image": "/images/features/feature8.jpg"
+        },
+        {
+            "title": "Cybersecurity Awareness Workshop",
+            "date": "5th May 2024",
+            "description": "Learn about online security and ethical hacking techniques",
+            "image": "/images/features/feature9.jpg"
+        },
+        {
+            "title": "Green Campus Drive",
+            "date": "12th May 2024",
+            "description": "An initiative to promote environmental awareness and sustainability",
+            "image": "/images/features/feature10.jpg"
         }
     ];
 
