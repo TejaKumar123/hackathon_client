@@ -29,7 +29,7 @@ const dummyAnnouncements = [
 	},
 ];
 
-const Announcements = () => {
+const FacultyEvents = () => {
 	const [announcements, setAnnouncements] = useState([]);
 
 	useEffect(() => {
@@ -80,4 +80,4 @@ const Announcements = () => {
 	);
 };
 
-export default Announcements;
+export default FacultyEvents;

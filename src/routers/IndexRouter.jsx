@@ -23,6 +23,11 @@ import Alumni from "../components/student/Alumni";
 import Announcements from "../components/student/Announcements";
 import Discussions from "../components/student/Discussions";
 import Opportunities from "../components/student/Opportunities";
+import FacultyHome from "../components/faculty/FacultyHome";
+import FacultyAnnouncements from "../components/faculty/FacultyAnnouncements";
+import FacultyProfile from "../components/faculty/FacultyProfile";
+import FacultyDiscussions from "../components/faculty/FacultyDiscussions";
+import FacultyEvents from "../components/faculty/FacultyEvents";
 
 
 const IndexRouter = () => {
@@ -58,8 +63,15 @@ const IndexRouter = () => {
 
 
                 {cookies.hackthon_token && user?.role === "faculty" && (
-                    <Route path="/" element={<FacultyDashboard />} />
+                    <Route path="/" element={<FacultyDashboard />} >
+                        <Route path="" element={<FacultyHome />} />
+                        <Route path="announcements" element={<FacultyAnnouncements />} />
+                        <Route path="profile" element={<FacultyProfile />} />
+                        <Route path="events" element={<FacultyEvents />} />
+                        <Route path="discussions" element={<FacultyDiscussions />} />
+                    </Route>
                 )}
+
 
                 {cookies.hackthon_token && user?.role === "alumni" && (
                     <Route path="/" element={<AlumniDashboard />} />
