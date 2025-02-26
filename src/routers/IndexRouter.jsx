@@ -33,7 +33,7 @@ const IndexRouter = () => {
         <>
             <Routes>
 
-                {(!cookies.hackthon_token || !user) && (
+                {(!cookies.hackthon_token && !user) && (
                     <>
                         <Route path="/" element={<Home />} />
                         <Route path="login" element={<Login />} />
