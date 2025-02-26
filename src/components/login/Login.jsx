@@ -53,7 +53,7 @@ const Login = () => {
 				dispatch(setUser(action?.payload?.data?.user));
 				setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });
 				toast.success(action?.payload?.message);
-				navigate('/dashboard'); // Add this line
+				navigate('/'); // Add this line
 			}
 			else {
 				toast.error(action?.payload?.message);
