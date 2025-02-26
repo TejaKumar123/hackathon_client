@@ -34,14 +34,6 @@ import AlumniProfile from "../components/alumni/AlumniProfile";
 import AlumniAlumni from "../components/alumni/AlumniAlumni";
 import AlumniOpportunities from "../components/alumni/AlumniOpportunities";
 import AlumniDiscussions from "../components/alumni/AlumniDiscussions";
-import AdminHome from "../components/admin/AdminHome";
-import AdminProfile from "../components/admin/AdminProfile";
-import AdminClubs from "../components/admin/AdminClubs";
-import AdminEvents from "../components/admin/AdminEvents";
-import AdminAlumni from "../components/admin/AdminAlumni";
-import AdminAnnouncements from "../components/admin/AdminAnnouncements";
-import AdminDiscussions from "../components/admin/AdminDiscussions";
-import AdminOpportunities from "../components/admin/AdminOpportunities";
 
 
 const IndexRouter = () => {
@@ -103,15 +95,15 @@ const IndexRouter = () => {
                     <Route path="/" element={<AdminDashboard />} />
                 )}
                 <Route path="/admin" element={<AdminDashboard />} >
-                    <Route path="" element={<AdminHome />} />
-                    <Route path="profile" element={<AdminProfile />} />
-                    {/* <Route path="settings" element={<AdminSettings />} /> */}
-                    <Route path="clubs" element={<AdminClubs />} />
-                    <Route path="events" element={<AdminEvents />} />
-                    <Route path="alumni" element={<AdminAlumni />} />
-                    <Route path="announcements" element={<AdminAnnouncements />} />
-                    <Route path="discussions" element={<AdminDiscussions />} />
-                    <Route path="opportunities" element={<AdminOpportunities />} />
+                    <Route path="" element={<StudentHome />} />
+                    <Route path="profile" element={<Profile />} />
+                    {/* <Route path="settings" element={<Settings />} /> */}
+                    <Route path="clubs" element={<Clubs />} />
+                    <Route path="events" element={<Events />} />
+                    <Route path="alumni" element={<Alumni />} />
+                    <Route path="announcements" element={<Announcements />} />
+                    <Route path="discussions" element={<Discussions />} />
+                    <Route path="opportunities" element={<Opportunities />} />
                 </Route>
 
                 {cookies.hackathon_token && user?.role === "club_coordinator" && (
