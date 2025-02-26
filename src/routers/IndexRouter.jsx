@@ -100,19 +100,19 @@ const IndexRouter = () => {
 
 
                 {cookies.hackathon_token && user?.role === "admin" && (
-                    <Route path="/" element={<AdminDashboard />} />
+                    <Route path="/" element={<AdminDashboard />} >
+                        <Route path="" element={<AdminHome />} />
+                        <Route path="profile" element={<AdminProfile />} />
+                        {/* <Route path="settings" element={<AdminSettings />} /> */}
+                        <Route path="clubs" element={<AdminClubs />} />
+                        <Route path="events" element={<AdminEvents />} />
+                        <Route path="alumni" element={<AdminAlumni />} />
+                        <Route path="announcements" element={<AdminAnnouncements />} />
+                        <Route path="discussions" element={<AdminDiscussions />} />
+                        <Route path="opportunities" element={<AdminOpportunities />} />
+                    </Route>
                 )}
-                <Route path="/admin" element={<AdminDashboard />} >
-                    <Route path="" element={<AdminHome />} />
-                    <Route path="profile" element={<AdminProfile />} />
-                    {/* <Route path="settings" element={<AdminSettings />} /> */}
-                    <Route path="clubs" element={<AdminClubs />} />
-                    <Route path="events" element={<AdminEvents />} />
-                    <Route path="alumni" element={<AdminAlumni />} />
-                    <Route path="announcements" element={<AdminAnnouncements />} />
-                    <Route path="discussions" element={<AdminDiscussions />} />
-                    <Route path="opportunities" element={<AdminOpportunities />} />
-                </Route>
+
 
                 {cookies.hackathon_token && user?.role === "club_coordinator" && (
                     <Route path="/" element={<ClubCoordinatorDashboard />} />
