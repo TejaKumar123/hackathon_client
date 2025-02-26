@@ -167,53 +167,82 @@ const dummyAnnouncements = [
 
 const Announcements = () => {
 	const [announcements, setAnnouncements] = useState([]);
-
+	const [loading, setLoading] = useState(true);
+	const [searchQuery, setSearchQuery] = useState("");
+  
 	useEffect(() => {
-		const fetchAnnouncements = async () => {
-			try {
-				const response = await axios.post("http://localhost:5000/announcement/", { criteria: {}, projection: {} }); // Adjust API URL if needed
-				setAnnouncements(response.data);
-			} catch (error) {
-				console.error("Error fetching announcements:", error);
-				setAnnouncements(dummyAnnouncements); // Use dummy data on failure
-			}
-		};
-		fetchAnnouncements();
+	  const fetchAnnouncements = async () => {
+		try {
+		  const response = await axios.post("http://localhost:5000/announcement/", { criteria: {}, projection: {} });
+		  setAnnouncements(response.data);
+		} catch (error) {
+		  console.error("Error fetching announcements:", error);
+		  setAnnouncements(dummyAnnouncements);
+		} finally {
+		  setLoading(false);
+		}
+	  };
+	  fetchAnnouncements();
 	}, []);
-
-	return (
-		<div className="p-6">
-			<h2 className="text-3xl font-bold mb-4">Events</h2>
-			<div className="space-y-6">
-				{announcements.map((announcement) => (
-					<div key={announcement._id} className="bg-white shadow-md rounded-lg p-4">
-						<h3 className="text-xl font-semibold">{announcement.title}</h3>
-						<p className="text-gray-600">{announcement.content}</p>
-						<p className="text-sm text-gray-500 mt-2">Posted by {announcement.author} on {new Date(announcement.postedAt).toLocaleDateString()}</p>
-
-						{announcement.attachments.length > 0 && (
-							<div className="mt-3">
-								<h4 className="text-lg font-medium">Attachments:</h4>
-								<div className="flex space-x-2 mt-2">
-									{announcement.attachments.map((file, index) => (
-										<a
-											key={index}
-											href={file}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="text-blue-500 underline"
-										>
-											View Attachment {index + 1}
-										</a>
-									))}
-								</div>
-							</div>
-						)}
-					</div>
-				))}
-			</div>
-		</div>
+  
+	// Filter announcements based on search query
+	const filteredAnnouncements = announcements.filter(announcement =>
+	  announcement.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+	  announcement.content.toLowerCase().includes(searchQuery.toLowerCase())
 	);
-};
-
-export default Announcements;
+  
+	return (
+	  <div className="p-6">
+		<h2 className="text-3xl font-bold mb-4">Announcements</h2>
+  
+		{/* Search Input */}
+		<div className="mb-4">
+		  <input
+			type="text"
+			placeholder="Search announcements..."
+			value={searchQuery}
+			onChange={(e) => setSearchQuery(e.target.value)}
+			className="w-full px-4 py-2 border rounded-md"
+		  />
+		</div>
+  
+		{/* Loading Indicator */}
+		{loading ? (
+		  <p>Loading announcements...</p>
+		) : (
+		  <div className="space-y-6">
+			{filteredAnnouncements.map((announcement) => (
+			  <div key={announcement._id} className="bg-white shadow-md rounded-lg p-4">
+				<h3 className="text-xl font-semibold">{announcement.title}</h3>
+				<p className="text-gray-600">{announcement.content}</p>
+				<p className="text-sm text-gray-500 mt-2">
+				  Posted by {announcement.author} on {new Date(announcement.postedAt).toLocaleDateString()}
+				</p>
+  
+				{announcement.attachments.length > 0 && (
+				  <div className="mt-3">
+					<h4 className="text-lg font-medium">Attachments:</h4>
+					<div className="flex space-x-2 mt-2">
+					  {announcement.attachments.map((file, index) => (
+						<a
+						  key={index}
+						  href={file}
+						  target="_blank"
+						  rel="noopener noreferrer"
+						  className="text-blue-500 underline"
+						>
+						  View Attachment {index + 1}
+						</a>
+					  ))}
+					</div>
+				  </div>
+				)}
+			  </div>
+			))}
+		  </div>
+		)}
+	  </div>
+	);
+  };
+  
+  export default Announcements;

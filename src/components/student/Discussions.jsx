@@ -168,73 +168,90 @@ const dummyDiscussions = [
 const Discussions = () => {
 	const [discussions, setDiscussions] = useState([]);
 	const [selectedCategory, setSelectedCategory] = useState("All");
-
+	const [searchQuery, setSearchQuery] = useState("");
+  
 	useEffect(() => {
-		const fetchDiscussions = async () => {
-			try {
-				const response = await axios.post("http://localhost:5000/discussion/", { criteria: {}, projection: {} });
-				setDiscussions(response.data);
-			} catch (error) {
-				console.error("Error fetching discussions:", error);
-				setDiscussions(dummyDiscussions);
-			}
-		};
-		fetchDiscussions();
+	  const fetchDiscussions = async () => {
+		try {
+		  const response = await axios.post("http://localhost:5000/discussion/", { criteria: {}, projection: {} });
+		  setDiscussions(response.data);
+		} catch (error) {
+		  console.error("Error fetching discussions:", error);
+		  setDiscussions(dummyDiscussions);
+		}
+	  };
+	  fetchDiscussions();
 	}, []);
-
-	// Filter discussions based on category
-	const filteredDiscussions = selectedCategory === "All"
-		? discussions
-		: discussions.filter(discussion => discussion.category === selectedCategory);
-
+  
+	// Filter discussions based on category and search query
+	const filteredDiscussions = discussions.filter(discussion => {
+	  const matchesCategory = selectedCategory === "All" || discussion.category === selectedCategory;
+	  const matchesSearch = discussion.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+							discussion.content.toLowerCase().includes(searchQuery.toLowerCase());
+	  return matchesCategory && matchesSearch;
+	});
+  
 	return (
-		<div className="p-6">
-			<h2 className="text-3xl font-bold mb-4">Discussions</h2>
-
-			{/* Category Filters */}
-			<div className="flex space-x-4 mb-6">
-				{["All", "Event", "Club", "Opportunities"].map(category => (
-					<button
-						key={category}
-						className={`px-4 py-2 rounded ${selectedCategory === category
-								? "bg-blue-600 text-white"
-								: "bg-gray-200 text-gray-800"
-							}`}
-						onClick={() => setSelectedCategory(category)}
-					>
-						{category}
-					</button>
-				))}
-			</div>
-<div className="flex justify-between items-center mb-6">
-    <h2 className="text-3xl font-bold">Discussions</h2>
-    <button
-        onClick={() => navigate("/discussions/create")}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-    >
-        Create Discussion
-    </button>
-</div>
-			{/* Discussions List */}
-			<div className="space-y-6">
-				{filteredDiscussions.map((discussion) => (
-					<div key={discussion._id} className="bg-white shadow-md rounded-lg p-4">
-						<h3 className="text-xl font-semibold">{discussion.title}</h3>
-						<p className="text-gray-600">{discussion.content}</p>
-						<p className="text-sm text-gray-500 mt-2">
-							Posted by {discussion.author} on {new Date(discussion.createdAt).toLocaleDateString()}
-						</p>
-						<span className={`inline-block mt-3 px-3 py-1 rounded-full text-sm font-medium ${discussion.category === "Event" ? "bg-green-200 text-green-800" :
-								discussion.category === "Club" ? "bg-blue-200 text-blue-800" :
-									"bg-yellow-200 text-yellow-800"
-							}`}>
-							{discussion.category}
-						</span>
-					</div>
-				))}
-			</div>
+	  <div className="p-6">
+		<h2 className="text-3xl font-bold mb-4">Discussions</h2>
+  
+		{/* Search Input */}
+		<div className="mb-4">
+		  <input
+			type="text"
+			placeholder="Search discussions..."
+			value={searchQuery}
+			onChange={(e) => setSearchQuery(e.target.value)}
+			className="w-full px-4 py-2 border rounded-md"
+		  />
 		</div>
+  
+		{/* Category Filters */}
+		<div className="flex space-x-4 mb-6">
+		  {["All", "Event", "Club", "Opportunities"].map(category => (
+			<button
+			  key={category}
+			  className={`px-4 py-2 rounded ${selectedCategory === category
+				? "bg-blue-600 text-white"
+				: "bg-gray-200 text-gray-800"
+				}`}
+			  onClick={() => setSelectedCategory(category)}
+			>
+			  {category}
+			</button>
+		  ))}
+		</div>
+  
+		<div className="flex justify-between items-center mb-6">
+		  <h2 className="text-3xl font-bold">Discussions</h2>
+		  <button
+			onClick={() => navigate("/discussions/create")}
+			className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+		  >
+			Create Discussion
+		  </button>
+		</div>
+  
+		{/* Discussions List */}
+		<div className="space-y-6">
+		  {filteredDiscussions.map((discussion) => (
+			<div key={discussion._id} className="bg-white shadow-md rounded-lg p-4">
+			  <h3 className="text-xl font-semibold">{discussion.title}</h3>
+			  <p className="text-gray-600">{discussion.content}</p>
+			  <p className="text-sm text-gray-500 mt-2">
+				Posted by {discussion.author} on {new Date(discussion.createdAt).toLocaleDateString()}
+			  </p>
+			  <span className={`inline-block mt-3 px-3 py-1 rounded-full text-sm font-medium ${discussion.category === "Event" ? "bg-green-200 text-green-800" :
+				discussion.category === "Club" ? "bg-blue-200 text-blue-800" :
+				  "bg-yellow-200 text-yellow-800"
+				}`}>
+				{discussion.category}
+			  </span>
+			</div>
+		  ))}
+		</div>
+	  </div>
 	);
-};
-
-export default Discussions;
+  };
+  
+  export default Discussions;
