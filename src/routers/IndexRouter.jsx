@@ -42,7 +42,7 @@ const IndexRouter = () => {
                 )}
 
 
-                {cookies.hackthon_token && user?.role === "student" && (
+                {cookies.hackathon_token && user?.role == "student" && (
                     <Route path="/" element={<StudentDashboard />}>
                         <Route path="" element={<StudentHome />} />
                         <Route path="profile" element={<Profile />} />
