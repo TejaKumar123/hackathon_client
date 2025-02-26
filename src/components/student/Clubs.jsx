@@ -3,12 +3,16 @@ import { useEffect, useState } from "react";
 
 // Dummy club data
 const dummyClubs = [
-	{ _id: "1", name: "AI & Robotics Club", description: "Exploring AI, ML, and Robotics with hands-on projects." },
-	{ _id: "2", name: "Coding Club", description: "A community for coding enthusiasts to solve problems and build projects." },
-	{ _id: "3", name: "Photography Club", description: "Capture moments and enhance your photography skills." },
-	{ _id: "4", name: "Music Club", description: "A space for musicians to collaborate and create music." },
-	{ _id: "5", name: "Debate Club", description: "Sharpen your debating skills and engage in intellectual discussions." },
-	{ _id: "6", name: "Entrepreneurship Club", description: "For aspiring entrepreneurs to discuss business ideas and innovation." },
+    { _id: "1", name: "AI & Robotics Club", description: "Explore AI, ML, and Robotics." },
+    { _id: "2", name: "Coding Club", description: "Solve problems and build projects!" },
+    { _id: "3", name: "Music Club", description: "Showcase your musical talents." },
+    { _id: "4", name: "Drama Club", description: "Act, direct, and write plays." },
+    { _id: "5", name: "Photography Club", description: "Capture stunning moments." },
+    { _id: "6", name: "Eco Club", description: "Work towards a sustainable future." },
+    { _id: "7", name: "Entrepreneurship Club", description: "Learn how to build startups." },
+    { _id: "8", name: "Sports Club", description: "Engage in various sports activities." },
+    { _id: "9", name: "Debate Society", description: "Sharpen your argumentation skills." },
+    { _id: "10", name: "Film & Animation Club", description: "Create short films and animations." }
 ];
 
 const Clubs = () => {

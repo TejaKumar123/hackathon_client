@@ -26,7 +26,144 @@ const dummyDiscussions = [
 		category: "Opportunities",
 		createdAt: "2024-02-15",
 	},
+	{
+		_id: "4",
+		title: "Best Resources for Learning Full-Stack Development",
+		content: "Can anyone recommend good resources for MERN stack learning?",
+		author: "David Lee",
+		category: "Learning",
+		createdAt: "2024-02-12",
+	},
+	{
+		_id: "5",
+		title: "Cybersecurity Awareness Workshop",
+		content: "Discussion on the upcoming cybersecurity workshop. What topics should we focus on?",
+		author: "Emma Brown",
+		category: "Event",
+		createdAt: "2024-02-10",
+	},
+	{
+		_id: "6",
+		title: "How to Prepare for Coding Interviews?",
+		content: "What are the best platforms and techniques to crack FAANG interviews?",
+		author: "Frank Wilson",
+		category: "Career",
+		createdAt: "2024-02-08",
+	},
+	{
+		_id: "7",
+		title: "The Future of AI in Education",
+		content: "How can AI enhance the education sector and learning experience?",
+		author: "Grace Miller",
+		category: "Technology",
+		createdAt: "2024-02-05",
+	},
+	{
+		_id: "8",
+		title: "Freelancing vs Full-Time Job in Tech",
+		content: "Which is better in terms of income, stability, and work-life balance?",
+		author: "Henry Adams",
+		category: "Career",
+		createdAt: "2024-02-02",
+	},
+	{
+		_id: "9",
+		title: "Upcoming Tech Conferences in 2024",
+		content: "Which tech events should we attend this year?",
+		author: "Isabella Thompson",
+		category: "Event",
+		createdAt: "2024-01-30",
+	},
+	{
+		_id: "10",
+		title: "Best Open-Source Projects to Contribute to in 2024",
+		content: "Looking for beginner-friendly open-source projects. Any recommendations?",
+		author: "Jack Robinson",
+		category: "Learning",
+		createdAt: "2024-01-28",
+	},
+	{
+		_id: "11",
+		title: "How to Get Started with Blockchain Development?",
+		content: "What are the best resources and frameworks for blockchain development?",
+		author: "Laura Martinez",
+		category: "Technology",
+		createdAt: "2024-01-25",
+	},
+	{
+		_id: "12",
+		title: "Best Websites for Competitive Programming",
+		content: "Which platforms are best for improving problem-solving skills?",
+		author: "Michael Carter",
+		category: "Learning",
+		createdAt: "2024-01-22",
+	},
+	{
+		_id: "13",
+		title: "Tips for Writing a Strong Resume for Tech Jobs",
+		content: "What key points should be included in a tech resume?",
+		author: "Nancy White",
+		category: "Career",
+		createdAt: "2024-01-20",
+	},
+	{
+		_id: "14",
+		title: "Best Tools for UI/UX Design in 2024",
+		content: "Which design tools are trending for UI/UX designers?",
+		author: "Oliver Scott",
+		category: "Technology",
+		createdAt: "2024-01-18",
+	},
+	{
+		_id: "15",
+		title: "AI & Robotics Club - Monthly Meetup Agenda",
+		content: "What topics should we cover in this month's meeting?",
+		author: "Paul Walker",
+		category: "Club",
+		createdAt: "2024-01-15",
+	},
+	{
+		_id: "16",
+		title: "Entrepreneurship: How to Build a Startup from Scratch?",
+		content: "What are the key steps in turning an idea into a business?",
+		author: "Rachel Green",
+		category: "Opportunities",
+		createdAt: "2024-01-12",
+	},
+	{
+		_id: "17",
+		title: "Best AI Frameworks for Machine Learning",
+		content: "Which ML frameworks are the most efficient in 2024?",
+		author: "Steve Harris",
+		category: "Technology",
+		createdAt: "2024-01-10",
+	},
+	{
+		_id: "18",
+		title: "How to Balance Coding and Academics?",
+		content: "Tips for managing coding practice alongside college studies.",
+		author: "Tina Anderson",
+		category: "Learning",
+		createdAt: "2024-01-07",
+	},
+	{
+		_id: "19",
+		title: "Upcoming Hackathons in 2024 - Where to Participate?",
+		content: "List of upcoming national and international hackathons.",
+		author: "Uma Patel",
+		category: "Event",
+		createdAt: "2024-01-05",
+	},
+	{
+		_id: "20",
+		title: "How to Get Clients as a Freelancer?",
+		content: "Best platforms and strategies to land freelancing projects.",
+		author: "Victor Reynolds",
+		category: "Career",
+		createdAt: "2024-01-03",
+	},
 ];
+
 
 const Discussions = () => {
 	const [discussions, setDiscussions] = useState([]);
@@ -69,7 +206,15 @@ const Discussions = () => {
 					</button>
 				))}
 			</div>
-
+<div className="flex justify-between items-center mb-6">
+    <h2 className="text-3xl font-bold">Discussions</h2>
+    <button
+        onClick={() => navigate("/discussions/create")}
+        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+    >
+        Create Discussion
+    </button>
+</div>
 			{/* Discussions List */}
 			<div className="space-y-6">
 				{filteredDiscussions.map((discussion) => (
