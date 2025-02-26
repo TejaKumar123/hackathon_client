@@ -60,7 +60,7 @@ const Login = () => {
 			}
 		})
 	}
-	
+
 	const googleLogin = async (response) => {
 		response.type = "google"
 		dispatch(login(response)).then((action) => {
@@ -68,10 +68,11 @@ const Login = () => {
 				dispatch(setUser(action?.payload?.data?.user));
 				setCookie("hackathon_token", action?.payload?.data?.token, { path: "/", maxAge: 86400 });
 				toast.success(action?.payload?.message);
-				navigate('/dashboard'); // Add this line
+				navigate('/'); // Add this line
 			}
 			else {
 				toast.error(action?.payload?.message);
+
 			}
 		})
 	}
@@ -104,7 +105,7 @@ const Login = () => {
 	return (
 		<>
 			<div className="w-[100%] h-auto bg-transparent fixed top-[0px] px-[10px] py-[5px]">
-				<p className="text-[150%] cursor-pointer" onClick={() => navigate("/", { replace: true })}>Hackathon</p>
+				<p className="text-[150%] cursor-pointer" onClick={() => navigate("/", { replace: true })}>RGUKT CONNECT</p>
 				{/* <p>{JSON.stringify(user)}</p> */}
 			</div>
 			<div className="w-[400px] h-auto mt-[100px] border-[0px] border-[black] m-auto">

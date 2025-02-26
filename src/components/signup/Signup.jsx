@@ -62,7 +62,7 @@ const Signup = () => {
 			}
 		})
 	}
-	
+
 	const googleSignup = async (response) => {
 		response.type = "google"
 		dispatch(signup(response)).then((action) => {
@@ -109,7 +109,7 @@ const Signup = () => {
 	return (
 		<>
 			<div className="w-[100%] h-auto bg-transparent fixed top-[0px] px-[10px] py-[5px]">
-				<p className="text-[150%] cursor-pointer" onClick={() => navigate("/", { replace: true })}>Hackathon</p>
+				<p className="text-[150%] cursor-pointer" onClick={() => navigate("/", { replace: true })}>RGUKT CONNECT</p>
 				{/* <p>{JSON.stringify(user)}</p> */}
 			</div>
 			<div className="w-[400px] h-auto mt-[100px] border-[0px] border-[black] m-auto">

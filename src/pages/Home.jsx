@@ -48,48 +48,53 @@ const Home = () => {
             title: "Technical Workshop",
             date: "15th March 2024",
             description: "Advanced Python Programming Workshop by CSE Department",
-            image: "https://www.rguktrkv.ac.in/static/media/campus.jpg"
+            image: "/images/features/feature1.jpeg"
         },
         {
             title: "Cultural Fest",
             date: "20th March 2024",
             description: "Annual Cultural Festival - Celebrations and Performances",
-            image: "https://www.rguktrkv.ac.in/static/media/campus.jpg"
+            image: "/images/features/feature2.jpeg"
         },
         {
             title: "Research Symposium",
             date: "25th March 2024",
             description: "International Research Symposium on Emerging Technologies",
-            image: "https://www.rguktrkv.ac.in/static/media/campus.jpg"
+            image: "/images/features/feature3.jpeg"
         }
     ];
 
     return (
         <div className="min-h-screen bg-gray-50">
             {/* Navigation */}
-            <nav className={`fixed w-full z-50 transition-all duration-300 ${
-                scrolled ? 'bg-white shadow-lg' : 'bg-transparent'
-            }`}>
+            <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-lg' : 'bg-transparent'
+                }`}>
                 <div className="max-w-7xl mx-auto px-4">
                     <div className="flex justify-between items-center h-16">
                         <div className="flex items-center">
-                            <img 
-                                src="https://www.rguktrkv.ac.in/static/media/logo.png"
+                            <img
+                                src="/images/logo.png"
                                 alt="RGUKT Logo"
                                 className="h-12 w-auto"
                             />
-                            <span className="ml-2 text-xl font-bold text-gray-800">
+                            <span className={`ml-2 text-xl font-bold ${scrolled ? 'text-[black]' : 'text-[white]'}`}>
                                 RGUKT Connect
                             </span>
                         </div>
 
                         {/* Desktop Navigation */}
-                        <div className="hidden md:flex items-center space-x-4">
-                            <NavLink href="/discussions">Discussions</NavLink>
+                        <div className="hidden md:flex items-center space-x-4 text-[white]">
+                            {/*  <NavLink href="/discussions">Discussions</NavLink>
                             <NavLink href="/clubs">Clubs</NavLink>
                             <NavLink href="/events">Events</NavLink>
-                            <NavLink href="/resources">Resources</NavLink>
-                            <button 
+                            <NavLink href="/resources">Resources</NavLink> */}
+                            <button
+                                onClick={() => navigate('/signup')}
+                                className="ml-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                            >
+                                Sign Up
+                            </button>
+                            <button
                                 onClick={() => navigate('/login')}
                                 className="ml-4 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                             >
@@ -122,11 +127,11 @@ const Home = () => {
                 {isMenuOpen && (
                     <div className="md:hidden bg-white shadow-lg">
                         <div className="px-2 pt-2 pb-3 space-y-1">
-                            <MobileNavLink href="/discussions">Discussions</MobileNavLink>
+                            {/* <MobileNavLink href="/discussions">Discussions</MobileNavLink>
                             <MobileNavLink href="/clubs">Clubs</MobileNavLink>
                             <MobileNavLink href="/events">Events</MobileNavLink>
-                            <MobileNavLink href="/resources">Resources</MobileNavLink>
-                            <button 
+                            <MobileNavLink href="/resources">Resources</MobileNavLink> */}
+                            <button
                                 onClick={() => navigate('/login')}
                                 className="w-full text-left px-3 py-2 text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                             >
@@ -142,7 +147,7 @@ const Home = () => {
                 <div className="absolute inset-0">
                     <img
                         className="w-full h-full object-cover"
-                        src="https://www.rguktrkv.ac.in/static/media/campus.jpg"
+                        src="/images/img1.png"
                         alt="Campus"
                     />
                     <div className="absolute inset-0 bg-gray-900 opacity-75"></div>
@@ -256,7 +261,7 @@ const Home = () => {
                             Join our platform today and enhance your university experience
                         </p>
                         <button
-                            onClick={() => navigate('/register')}
+                            onClick={() => navigate('/signup')}
                             className="mt-8 bg-white text-blue-600 px-8 py-3 rounded-md font-medium hover:bg-gray-100"
                         >
                             Create Account
@@ -271,7 +276,7 @@ const Home = () => {
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                         <div className="col-span-2">
                             <img
-                                src="https://www.rguktrkv.ac.in/static/media/logo.png"
+                                src="/images/logo.png"
                                 alt="RGUKT Logo"
                                 className="h-12 w-auto mb-4"
                             />
