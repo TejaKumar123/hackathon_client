@@ -80,16 +80,16 @@ const IndexRouter = () => {
 
 
                 {cookies.hackathon_token && user?.role === "alumni" && (
-                    <Route path="/" element={<AlumniDashboard />} />
+                    <Route path="/" element={<AlumniDashboard />} >
+                        <Route path="" element={<AlumniHome />} />
+                        <Route path="profile" element={<AlumniProfile />} />
+                        <Route path="alumni" element={<AlumniAlumni />} />
+                        <Route path="opportunities" element={<AlumniOpportunities />} />
+                        <Route path="discussions" element={<AlumniDiscussions />} />
+                    </Route>
                 )}
 
-                <Route path="/alumni" element={<AlumniDashboard />} >
-                    <Route path="" element={<AlumniHome />} />
-                    <Route path="profile" element={<AlumniProfile />} />
-                    <Route path="alumni" element={<AlumniAlumni />} />
-                    <Route path="opportunities" element={<AlumniOpportunities />} />
-                    <Route path="discussions" element={<AlumniDiscussions />} />
-                </Route>
+
 
                 {cookies.hackathon_token && user?.role === "admin" && (
                     <Route path="/" element={<AdminDashboard />} />
