@@ -20,6 +20,7 @@ const Sidebar = () => {
         { path: "events", icon: <Event />, label: "Events" },
         { path: "announcements", icon: <Campaign />, label: "Announcements" },
         { path: "discussions", icon: <Forum />, label: "Discussions" },
+        { path: "clubs", icon: <Forum />, label: "clubs" },
     ];
 
     const handleLogout = () => {
@@ -85,7 +86,7 @@ const Sidebar = () => {
 
             {/* Settings & Logout Section */}
             <div className="p-4 border-t border-gray-700">
-                <NavLink
+                {/* <NavLink
                     to="settings"
                     className={({ isActive }) =>
                         `flex items-center space-x-3 px-4 py-3 rounded-lg mb-2 ${
@@ -97,7 +98,7 @@ const Sidebar = () => {
                 >
                     <Settings />
                     <span>Settings</span>
-                </NavLink>
+                </NavLink> */}
                 
                 <button
                     onClick={handleLogout}

@@ -6,7 +6,7 @@ import { Edit, Add, Delete } from "@mui/icons-material";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const AdminClubs = () => {
+const FacultyClubs = () => {
   const [clubs, setClubs] = useState([]);
   const [joinedClubs, setJoinedClubs] = useState({});
   const [open, setOpen] = useState(false);
@@ -207,4 +207,4 @@ const AdminClubs = () => {
   );
 };
 
-export default AdminClubs;
+export default FacultyClubs;

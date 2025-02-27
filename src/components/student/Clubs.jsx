@@ -1,140 +1,78 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-
-// Dummy data for testing
-const dummyClubs = [
-    { _id: "1", name: "AI & Robotics Club", description: "Explore AI, ML, and Robotics.", members: 120 },
-    { _id: "2", name: "Coding Club", description: "Solve problems and build projects!", members: 85 },
-    { _id: "3", name: "Music Club", description: "Showcase your musical talents.", members: 95 },
-    { _id: "4", name: "Drama Club", description: "Act, direct, and write plays.", members: 60 },
-    { _id: "5", name: "Photography Club", description: "Capture stunning moments.", members: 75 },
-    { _id: "6", name: "Eco Club", description: "Work towards a sustainable future.", members: 45 },
-    { _id: "7", name: "Entrepreneurship Club", description: "Learn how to build startups.", members: 110 },
-    { _id: "8", name: "Sports Club", description: "Engage in various sports activities.", members: 150 },
-    { _id: "9", name: "Debate Society", description: "Sharpen your argumentation skills.", members: 55 },
-    { _id: "10", name: "Film & Animation Club", description: "Create short films and animations.", members: 70 }
-];
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Clubs = () => {
-    const [clubs, setClubs] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [loading, setLoading] = useState(true);
-    const [joinedClubs, setJoinedClubs] = useState({});
+  const [clubs, setClubs] = useState([]);
+  const [joinedClubs, setJoinedClubs] = useState({});
 
-    // Fetch clubs on component mount
-    useEffect(() => {
-        fetchClubs();
-    }, []);
-
-    const fetchClubs = async () => {
-        setLoading(true);
-        try {
-            // Replace with your actual API endpoint
-            // const response = await axios.get('your-api-endpoint');
-            // setClubs(response.data);
-            
-            // Using dummy data for demonstration
-            setTimeout(() => {
-                setClubs(dummyClubs);
-                setLoading(false);
-            }, 1000);
-        } catch (error) {
-            console.error("Error fetching clubs:", error);
-            setClubs(dummyClubs);
-            setLoading(false);
+  // Fetch all clubs
+  const fetchClubs = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/club/clubfind", {
+        criteria: {},
+        projection: {
+          name: 1,
+          description: 1,
+          createdAt: 1
         }
-    };
+      });
+      
+      if (response.data.status === "ok") {
+        setClubs(response.data.data);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error fetching clubs!");
+      console.error("Error fetching clubs:", error);
+    }
+  };
 
-    // Handle club join/leave
-    const handleJoinClub = (clubId) => {
-        setJoinedClubs(prev => ({
-            ...prev,
-            [clubId]: !prev[clubId]
-        }));
-    };
+  useEffect(() => {
+    fetchClubs();
+  }, []);
 
-    // Filter clubs based on search term
-    const filteredClubs = clubs.filter(club => 
-        club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        club.description.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  // Handle Join Button Click
+  const handleJoin = async (clubId) => {
+    try {
+      setJoinedClubs((prev) => ({
+        ...prev,
+        [clubId]: !prev[clubId],
+      }));
+      toast.success("Club join status updated!");
+    } catch (error) {
+      toast.error("Error updating join status!");
+      console.error("Error joining club:", error);
+    }
+  };
 
-    return (
-        <div className="min-h-screen bg-gray-100 py-8 px-4">
-            <div className="max-w-6xl mx-auto">
-                {/* Header Section */}
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-4">
-                        Available Clubs
-                    </h1>
-                    
-                    {/* Search Bar */}
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Search clubs..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full md:w-96 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        />
-                    </div>
-                </div>
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-3xl font-bold">Clubs</h2>
+      </div>
 
-                {/* Loading State */}
-                {loading ? (
-                    <div className="flex justify-center items-center h-64">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                    </div>
-                ) : (
-                    <>
-                        {/* No Results */}
-                        {filteredClubs.length === 0 ? (
-                            <div className="text-center py-12">
-                                <h2 className="text-xl text-gray-600">No clubs found</h2>
-                                <p className="text-gray-400 mt-2">Try different search terms</p>
-                            </div>
-                        ) : (
-                            /* Clubs Grid */
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredClubs.map((club) => (
-                                    <div
-                                        key={club._id}
-                                        className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 overflow-hidden"
-                                    >
-                                        <div className="p-6">
-                                            <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                                                {club.name}
-                                            </h3>
-                                            <p className="text-gray-600 mb-4">
-                                                {club.description}
-                                            </p>
-                                            <div className="flex items-center justify-between">
-                                                <button
-                                                    onClick={() => handleJoinClub(club._id)}
-                                                    className={`
-                                                        px-6 py-2 rounded-lg font-medium transition-all duration-200
-                                                        ${joinedClubs[club._id]
-                                                            ? 'bg-green-500 text-white hover:bg-green-600'
-                                                            : 'bg-blue-500 text-white hover:bg-blue-600'
-                                                        }
-                                                    `}
-                                                >
-                                                    {joinedClubs[club._id] ? 'Joined' : 'Join Club'}
-                                                </button>
-                                                <span className="text-sm text-gray-500">
-                                                    {club.members} members
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </>
-                )}
-            </div>
-        </div>
-    );
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {clubs.map((club) => (
+          <div key={club._id} className="bg-white shadow-md rounded-lg p-4 relative">
+            <h3 className="text-xl font-semibold">{club.name}</h3>
+            <p className="text-gray-600">{club.description}</p>
+            <button
+              className={`mt-3 px-4 py-2 rounded ${
+                joinedClubs[club._id] ? "bg-green-500 text-white" : "bg-blue-500 text-white"
+              }`}
+              onClick={() => handleJoin(club._id)}
+            >
+              {joinedClubs[club._id] ? "Joined" : "Join"}
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Clubs;

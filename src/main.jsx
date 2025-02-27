@@ -10,7 +10,6 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persister}>
         <BrowserRouter>
@@ -20,5 +19,4 @@ createRoot(document.getElementById('root')).render(
         </BrowserRouter>
       </PersistGate>
     </Provider>
-  </StrictMode >,
 )

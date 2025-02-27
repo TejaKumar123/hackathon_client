@@ -1,175 +1,237 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
 import axios from "axios";
-
-// Dummy announcement data
-const dummyAnnouncements = [
-  {
-    _id: "1",
-    title: "Mid-Term Exam Schedule Released",
-    content: "Mid-term exams will begin on March 15. Check the university portal for more details.",
-    author: "Admin",
-    postedAt: "2024-02-25",
-    attachments: ["https://via.placeholder.com/150"],
-  },
-  {
-    _id: "2",
-    title: "Workshop on AI & Machine Learning",
-    content: "A workshop on AI & ML will be conducted by industry experts. Register before March 10.",
-    author: "Prof. John Doe",
-    postedAt: "2024-02-22",
-    attachments: [],
-  },
-  {
-    _id: "3",
-    title: "Sports Week Registration Open!",
-    content: "Register now for the annual sports week and showcase your talent in various sports events.",
-    author: "Student Council",
-    postedAt: "2024-02-20",
-    attachments: ["https://via.placeholder.com/150"],
-  },
-];
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const FacultyAnnouncements = () => {
-  const [announcements, setAnnouncements] = useState(dummyAnnouncements);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [sortOrder, setSortOrder] = useState("newest");
+  const [announcements, setAnnouncements] = useState([]);
+  const [formData, setFormData] = useState({
+    title: "",
+    content: "",
+    attachments: ""
+  });
+  const [editingId, setEditingId] = useState(null);
+
+  // Get user from Redux store
+  const {user} = useSelector((state) => state.user);
+
+  // Fetch all announcements
+  const fetchAnnouncements = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/announcement/announcementfind", {
+        criteria: {},
+        projection: {
+          title: 1,
+          content: 1,
+          author: 1,
+          attachments: 1,
+          createdAt: 1
+        }
+      });
+      
+      if (response.data.status === "ok") {
+        setAnnouncements(response.data.data);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error fetching announcements!");
+      console.error("Error fetching announcements:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchAnnouncements = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.post("http://localhost:5000/announcement/", {
-          criteria: {},
-          projection: {},
-        });
-        setAnnouncements(response.data);
-      } catch (error) {
-        console.error("Error fetching announcements:", error);
-        setAnnouncements(dummyAnnouncements);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchAnnouncements();
   }, []);
 
-  // Filter and sort announcements
-  const filteredAnnouncements = announcements
-    .filter((announcement) => {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        announcement.title.toLowerCase().includes(searchLower) ||
-        announcement.content.toLowerCase().includes(searchLower) ||
-        announcement.author.toLowerCase().includes(searchLower)
-      );
-    })
-    .sort((a, b) => {
-      if (sortOrder === "newest") {
-        return new Date(b.postedAt) - new Date(a.postedAt);
+  // Handle form input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  // Handle adding/updating announcement
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const attachmentArray = formData.attachments
+        ? formData.attachments.split(",").map(url => url.trim()).filter(url => url !== "")
+        : [];
+
+      let response;
+      if (editingId) {
+        // Update existing announcement
+        response = await axios.post("http://localhost:5000/announcement/announcementupdate", {
+          criteria: { _id: editingId },
+          updatedInfo: {
+            $set: {
+              title: formData.title,
+              content: formData.content,
+              attachments: attachmentArray,
+            }
+          }
+        });
+      } else {
+		alert(user._id)
+        // Add new announcement
+        response = await axios.post("http://localhost:5000/announcement/announcementinsert", {
+          title: formData.title,
+          content: formData.content,
+          attachments: attachmentArray,
+          author: user._id
+        });
       }
-      return new Date(a.postedAt) - new Date(b.postedAt);
+
+      if (response.data.status === "ok") {
+        toast.success(response.data.message);
+        await fetchAnnouncements();
+        // Reset form
+        setFormData({ title: "", content: "", attachments: "" });
+        setEditingId(null);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error submitting announcement!");
+      console.error("Error submitting announcement:", error);
+    }
+  };
+
+  // Handle deleting an announcement
+  const handleDelete = async (id) => {
+    try {
+      const response = await axios.post("http://localhost:5000/announcement/announcementdelete", {
+        criteria: { _id: id }
+      });
+      
+      if (response.data.status === "ok") {
+        toast.success(response.data.message);
+        await fetchAnnouncements();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error deleting announcement!");
+      console.error("Error deleting announcement:", error);
+    }
+  };
+
+  // Handle editing an announcement (populate form)
+  const handleEdit = (announcement) => {
+    setEditingId(announcement._id);
+    setFormData({
+      title: announcement.title,
+      content: announcement.content,
+      attachments: announcement.attachments.join(", ")
     });
+  };
 
   return (
-    <div className="max-w-7xl mx-auto p-4">
-      {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Announcements</h2>
-        <p className="text-gray-600 mt-2">
-          Stay updated with the latest announcements
-        </p>
-      </div>
+    <div className="p-6">
+      <h2 className="text-3xl font-bold mb-4">Manage Announcements</h2>
 
-      {/* Search and Sort Controls */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      {/* Form for Adding/Editing Announcements */}
+      <form onSubmit={handleSubmit} className="bg-white shadow-md p-4 mb-6 rounded-lg">
+        <h3 className="text-xl font-semibold mb-4">
+          {editingId ? "Edit Announcement" : "Add Announcement"}
+        </h3>
         <input
           type="text"
-          placeholder="Search announcements..."
-          className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          name="title"
+          placeholder="Title"
+          value={formData.title}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded mt-2"
         />
-        <select
-          className="p-2 border rounded-lg bg-white"
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-        >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-        </select>
-      </div>
-
-      {/* Loading State */}
-      {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent"></div>
-        </div>
-      ) : (
-        // Announcements List
-        <div className="space-y-6">
-          {filteredAnnouncements.length === 0 ? (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
-              <p className="text-gray-500">No announcements found</p>
-            </div>
-          ) : (
-            filteredAnnouncements.map((announcement) => (
-              <div
-                key={announcement._id}
-                className="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition-all duration-200"
-              >
-                {/* Announcement Header */}
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-xl font-semibold text-gray-800">
-                    {announcement.title}
-                  </h3>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                    New
-                  </span>
-                </div>
-
-                {/* Content */}
-                <p className="text-gray-600 mb-4">{announcement.content}</p>
-
-                {/* Meta Information */}
-                <div className="text-sm text-gray-500 mb-4">
-                  <p>Posted by: {announcement.author}</p>
-                  <p>
-                    Date:{" "}
-                    {new Date(announcement.postedAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </p>
-                </div>
-
-                {/* Attachments */}
-                {announcement.attachments.length > 0 && (
-                  <div className="border-t pt-4">
-                    <h4 className="font-medium text-gray-700 mb-2">
-                      Attachments
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {announcement.attachments.map((file, index) => (
-                        <a
-                          key={index}
-                          href={file}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm text-blue-600 transition-colors duration-200"
-                        >
-                          View Attachment {index + 1}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))
+        <textarea
+          name="content"
+          placeholder="Content"
+          value={formData.content}
+          onChange={handleChange}
+          required
+          className="w-full p-2 border rounded mt-2"
+          rows="4"
+        />
+        <input
+          type="text"
+          name="attachments"
+          placeholder="Attachment URLs (comma-separated)"
+          value={formData.attachments}
+          onChange={handleChange}
+          className="w-full p-2 border rounded mt-2"
+        />
+        <div className="mt-4">
+          <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            {editingId ? "Update" : "Add"}
+          </button>
+          {editingId && (
+            <button
+              type="button"
+              onClick={() => {
+                setEditingId(null);
+                setFormData({ title: "", content: "", attachments: "" });
+              }}
+              className="ml-3 bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+            >
+              Cancel
+            </button>
           )}
         </div>
-      )}
+      </form>
+
+      {/* Announcements List */}
+      <div className="space-y-6">
+        {announcements.map((announcement) => (
+          <div key={announcement._id} className="bg-white shadow-md rounded-lg p-4">
+            <h3 className="text-xl font-semibold">{announcement.title}</h3>
+            <p className="text-gray-600 mt-2">{announcement.content}</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Posted by {announcement.author.fullName || announcement.author} on{" "}
+              {new Date(announcement.createdAt).toLocaleDateString()}
+            </p>
+
+            {/* Attachments */}
+            {announcement.attachments?.length > 0 && (
+              <div className="mt-3">
+                <h4 className="text-lg font-medium">Attachments:</h4>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {announcement.attachments.map((file, index) => (
+                    <a
+                      key={index}
+                      href={file}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-600 underline"
+                    >
+                      View Attachment {index + 1}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Edit & Delete Buttons */}
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => handleEdit(announcement)}
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(announcement._id)}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

@@ -1,43 +1,52 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
 import { Edit, Email, Person, CalendarToday, Badge } from "@mui/icons-material";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const defaultAvatar = "https://via.placeholder.com/150?text=Profile";
 
-const dummyUser = {
-    _id: "1234567890",
-    username: "john_doe",
-    fullname: "John Doe",
-    email: "johndoe@example.com",
-    role: "Student",
-    type: "user",
-    createdAt: "2024-02-26T12:00:00Z",
-    updatedAt: "2024-02-26T12:00:00Z",
-    profileImg: "https://randomuser.me/api/portraits/men/1.jpg",
-    bio: "Passionate student interested in technology and innovation",
-    department: "Computer Science",
-    year: "3rd Year"
-};
-
 const UserProfile = () => {
-    const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const userId = "1234567890"; // Replace with actual user ID from auth context
+    
+    // Get user from Redux store
+    const {user} = useSelector((state) => state.user);
 
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/user/${userId}`);
-                setUser(response.data);
+                const response = await axios.post("http://localhost:5000/auth/getUserData", {
+                    criteria: { _id: user._id },
+                    projection: {
+                        username: 1,
+                        fullname: 1,
+                        email: 1,
+                        role: 1,
+                        type: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        profileImg: 1
+                    }
+                });
+
+                if (response.data.status === "ok") {
+                    toast.success(response.data.message);
+                } else {
+                    toast.error(response.data.message);
+                }
             } catch (error) {
+                toast.error("Error fetching user profile!");
                 console.error("Error fetching user profile:", error);
-                setUser(dummyUser); // Use dummy data if API fails
             } finally {
                 setLoading(false);
             }
         };
-        fetchUserProfile();
-    }, []);
+
+        if (user?._id) {
+            fetchUserProfile();
+        }
+    }, [user?._id]);
 
     if (loading) {
         return (
@@ -68,7 +77,7 @@ const UserProfile = () => {
                     <div className="absolute -top-16 left-6">
                         <div className="relative group">
                             <img
-                                src={user.profileImg || defaultAvatar}
+                                src={user.profileImg || "https://picsum.photos/seed/picsum/200/300"}
                                 alt="User Profile"
                                 className="w-32 h-32 rounded-full border-4 border-white shadow-lg transition-transform duration-300 group-hover:scale-105"
                             />
@@ -96,14 +105,11 @@ const UserProfile = () => {
                             {user.role.toUpperCase()}
                         </span>
 
-                        {/* Bio */}
-                        <p className="mt-4 text-gray-600">{user.bio}</p>
-
                         {/* Additional Info */}
                         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <InfoItem icon={<Email />} label="Email" value={user.email} />
-                            <InfoItem icon={<Person />} label="Department" value={user.department} />
-                            <InfoItem icon={<Badge />} label="Year" value={user.year} />
+                            <InfoItem icon={<Person />} label="Username" value={user.username} />
+                            <InfoItem icon={<Badge />} label="Account Type" value={user.type} />
                             <InfoItem 
                                 icon={<CalendarToday />} 
                                 label="Joined" 
@@ -114,11 +120,10 @@ const UserProfile = () => {
                 </div>
             </div>
 
-            {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <StatCard title="Posts" value="23" />
-                <StatCard title="Following" value="456" />
-                <StatCard title="Followers" value="789" />
+            {/* Activity Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <StatCard title="Last Updated" value={formatDate(user.updatedAt)} />
+                <StatCard title="Role" value={user.role} />
             </div>
         </div>
     );

@@ -1,194 +1,237 @@
 import { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
 import axios from "axios";
 import { Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from "@mui/material";
 import { Edit, Add, Delete } from "@mui/icons-material";
-
-// Dummy event data
-const dummyAnnouncements = [
-	{
-		_id: "1",
-		title: "Semester Exams Schedule Released",
-		content: "The final semester exams will start from 10th March. Check the official university website for details.",
-		author: "Admin",
-		postedAt: "2024-02-25",
-		attachments: ["https://via.placeholder.com/150"],
-	},
-	{
-		_id: "2",
-		title: "New Research Funding Opportunities",
-		content: "Students interested in AI research can apply for the university's new research funding program.",
-		author: "Prof. John Doe",
-		postedAt: "2024-02-22",
-		attachments: [],
-	},
-	{
-		_id: "3",
-		title: "Campus Festival Registration Open!",
-		content: "Join us for the annual campus festival filled with cultural events, music, and sports!",
-		author: "Student Council",
-		postedAt: "2024-02-20",
-		attachments: ["https://via.placeholder.com/150"],
-	},
-];
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AdminEvents = () => {
-	const [announcements, setAnnouncements] = useState([]);
-	const [open, setOpen] = useState(false); // Modal State
-	const [editingEvent, setEditingEvent] = useState(null); // Event being edited
-	const [eventData, setEventData] = useState({ title: "", content: "", author: "", attachments: "" });
+  const [events, setEvents] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [eventData, setEventData] = useState({
+    name: "",
+    description: "",
+    date: "",
+    location: ""
+  });
 
-	useEffect(() => {
-		const fetchAnnouncements = async () => {
-			try {
-				const response = await axios.post("http://localhost:5000/announcement/", { criteria: {}, projection: {} });
-				setAnnouncements(response.data);
-			} catch (error) {
-				console.error("Error fetching announcements:", error);
-				setAnnouncements(dummyAnnouncements);
-			}
-		};
-		fetchAnnouncements();
-	}, []);
+  // Get user from Redux store
+  const {user} = useSelector((state) => state.user);
 
-	// Open Modal (For Create/Edit)
-	const handleOpen = (event = null) => {
-		setEditingEvent(event);
-		setEventData(event ? { title: event.title, content: event.content, author: event.author, attachments: event.attachments.join(", ") } : { title: "", content: "", author: "", attachments: "" });
-		setOpen(true);
-	};
+  // Fetch all events
+  const fetchEvents = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/event/eventfind", {
+        criteria: {},
+        projection: {
+          name: 1,
+          description: 1,
+          date: 1,
+          location: 1,
+          createdBy: 1,
+          createdAt: 1
+        }
+      });
+      
+      if (response.data.status === "ok") {
+        setEvents(response.data.data);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error fetching events!");
+      console.error("Error fetching events:", error);
+    }
+  };
 
-	// Close Modal
-	const handleClose = () => {
-		setOpen(false);
-		setEditingEvent(null);
-	};
+  useEffect(() => {
+    fetchEvents();
+  }, []);
 
-	// Handle Input Change
-	const handleChange = (e) => {
-		setEventData({ ...eventData, [e.target.name]: e.target.value });
-	};
+  // Open Modal (For Create/Edit)
+  const handleOpen = (event = null) => {
+    setEditingEvent(event);
+    setEventData(
+      event 
+        ? {
+            name: event.name,
+            description: event.description,
+            date: new Date(event.date).toISOString().split('T')[0],
+            location: event.location
+          }
+        : {
+            name: "",
+            description: "",
+            date: "",
+            location: ""
+          }
+    );
+    setOpen(true);
+  };
 
-	// Handle Create/Edit Submission
-	const handleSubmit = async () => {
-		const formattedAttachments = eventData.attachments.split(",").map((url) => url.trim());
+  // Close Modal
+  const handleClose = () => {
+    setOpen(false);
+    setEditingEvent(null);
+    setEventData({ name: "", description: "", date: "", location: "" });
+  };
 
-		if (editingEvent) {
-			// Edit Event API Call
-			console.log("Updating Event:", eventData);
-			setAnnouncements((prev) =>
-				prev.map((event) => (event._id === editingEvent._id ? { ...event, ...eventData, attachments: formattedAttachments } : event))
-			);
-		} else {
-			// Create Event API Call
-			console.log("Creating Event:", eventData);
-			const newEvent = { _id: Date.now().toString(), ...eventData, attachments: formattedAttachments, postedAt: new Date().toISOString() };
-			setAnnouncements((prev) => [...prev, newEvent]);
-		}
-		handleClose();
-	};
+  // Handle Input Change
+  const handleChange = (e) => {
+    setEventData({ ...eventData, [e.target.name]: e.target.value });
+  };
 
-	// Handle Delete Event
-	const handleDelete = async (eventId) => {
-		console.log("Deleting Event:", eventId);
-		setAnnouncements((prev) => prev.filter((event) => event._id !== eventId));
-	};
+  // Handle Create/Edit Submission
+  const handleSubmit = async () => {
+    try {
+      let response;
+      if (editingEvent) {
+        // Edit Event
+        response = await axios.post("http://localhost:5000/event/eventupdate", {
+          criteria: { _id: editingEvent._id },
+          updatedInfo: {
+            $set: {
+              name: eventData.name,
+              description: eventData.description,
+              date: new Date(eventData.date),
+              location: eventData.location,
+              updatedAt: new Date()
+            }
+          }
+        });
+      } else {
+        // Create Event
+        response = await axios.post("http://localhost:5000/event/eventinsert", {
+          name: eventData.name,
+          description: eventData.description,
+          date: new Date(eventData.date),
+          location: eventData.location,
+          createdBy: user._id
+        });
+      }
 
-	return (
-		<div className="p-6">
-			<div className="flex justify-between items-center mb-4">
-				<h2 className="text-3xl font-bold">Events</h2>
-				<Button variant="contained" color="primary" startIcon={<Add />} onClick={() => handleOpen()}>
-					Create Event
-				</Button>
-			</div>
+      if (response.data.status === "ok") {
+        toast.success(response.data.message);
+        await fetchEvents();
+        handleClose();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error submitting event!");
+      console.error("Error submitting event:", error);
+    }
+  };
 
-			<div className="space-y-6">
-				{announcements.map((announcement) => (
-					<div key={announcement._id} className="bg-white shadow-md rounded-lg p-4 relative">
-						<div className="absolute top-2 right-2 flex gap-2">
-							<IconButton onClick={() => handleOpen(announcement)}>
-								<Edit color="primary" />
-							</IconButton>
-							<IconButton onClick={() => handleDelete(announcement._id)}>
-								<Delete color="error" />
-							</IconButton>
-						</div>
-						<h3 className="text-xl font-semibold">{announcement.title}</h3>
-						<p className="text-gray-600">{announcement.content}</p>
-						<p className="text-sm text-gray-500 mt-2">Posted by {announcement.author} on {new Date(announcement.postedAt).toLocaleDateString()}</p>
+  // Handle Delete Event
+  const handleDelete = async (eventId) => {
+    try {
+      const response = await axios.post("http://localhost:5000/event/eventdelete", {
+        criteria: { _id: eventId }
+      });
+      
+      if (response.data.status === "ok") {
+        toast.success(response.data.message);
+        await fetchEvents();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      toast.error("Error deleting event!");
+      console.error("Error deleting event:", error);
+    }
+  };
 
-						{announcement.attachments.length > 0 && (
-							<div className="mt-3">
-								<h4 className="text-lg font-medium">Attachments:</h4>
-								<div className="flex space-x-2 mt-2">
-									{announcement.attachments.map((file, index) => (
-										<a
-											key={index}
-											href={file}
-											target="_blank"
-											rel="noopener noreferrer"
-											className="text-blue-500 underline"
-										>
-											View Attachment {index + 1}
-										</a>
-									))}
-								</div>
-							</div>
-						)}
-					</div>
-				))}
-			</div>
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-3xl font-bold">Events</h2>
+        <Button variant="contained" color="primary" startIcon={<Add />} onClick={() => handleOpen()}>
+          Create Event
+        </Button>
+      </div>
 
-			{/* Create/Edit Event Modal */}
-			<Dialog open={open} onClose={handleClose} fullWidth>
-				<DialogTitle>{editingEvent ? "Edit Event" : "Create Event"}</DialogTitle>
-				<DialogContent>
-					<TextField
-						margin="dense"
-						name="title"
-						label="Event Title"
-						type="text"
-						fullWidth
-						value={eventData.title}
-						onChange={handleChange}
-					/>
-					<TextField
-						margin="dense"
-						name="content"
-						label="Description"
-						type="text"
-						fullWidth
-						multiline
-						rows={3}
-						value={eventData.content}
-						onChange={handleChange}
-					/>
-					<TextField
-						margin="dense"
-						name="author"
-						label="Author"
-						type="text"
-						fullWidth
-						value={eventData.author}
-						onChange={handleChange}
-					/>
-					<TextField
-						margin="dense"
-						name="attachments"
-						label="Attachments (comma-separated URLs)"
-						type="text"
-						fullWidth
-						value={eventData.attachments}
-						onChange={handleChange}
-					/>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleClose} color="secondary">Cancel</Button>
-					<Button onClick={handleSubmit} color="primary">{editingEvent ? "Update" : "Create"}</Button>
-				</DialogActions>
-			</Dialog>
-		</div>
-	);
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {events.map((event) => (
+          <div key={event._id} className="bg-white shadow-md rounded-lg p-4 relative">
+            <div className="absolute top-2 right-2 flex gap-2">
+              <IconButton onClick={() => handleOpen(event)}>
+                <Edit color="primary" />
+              </IconButton>
+              <IconButton onClick={() => handleDelete(event._id)}>
+                <Delete color="error" />
+              </IconButton>
+            </div>
+            <h3 className="text-xl font-semibold">{event.name}</h3>
+            <p className="text-gray-600 mt-2">{event.description}</p>
+            <div className="mt-2 text-sm text-gray-500">
+              <p>Date: {new Date(event.date).toLocaleDateString()}</p>
+              <p>Location: {event.location}</p>
+              <p>Created: {new Date(event.createdAt).toLocaleDateString()}</p>
+              <p>Created by: {event.createdBy.fullName || 'Unknown'}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Create/Edit Event Modal */}
+      <Dialog open={open} onClose={handleClose} fullWidth>
+        <DialogTitle>{editingEvent ? "Edit Event" : "Create Event"}</DialogTitle>
+        <DialogContent>
+          <TextField
+            margin="dense"
+            name="name"
+            label="Event Name"
+            type="text"
+            fullWidth
+            value={eventData.name}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            margin="dense"
+            name="description"
+            label="Description"
+            type="text"
+            fullWidth
+            multiline
+            rows={3}
+            value={eventData.description}
+            onChange={handleChange}
+            required
+          />
+          <TextField
+            margin="dense"
+            name="date"
+            label="Event Date"
+            type="date"
+            fullWidth
+            value={eventData.date}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+            required
+          />
+          <TextField
+            margin="dense"
+            name="location"
+            label="Location"
+            type="text"
+            fullWidth
+            value={eventData.location}
+            onChange={handleChange}
+            required
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">Cancel</Button>
+          <Button onClick={handleSubmit} color="primary">{editingEvent ? "Update" : "Create"}</Button>
+        </DialogActions>
+      </Dialog>
+    </div>
+  );
 };
 
 export default AdminEvents;

@@ -42,6 +42,7 @@ import AdminAlumni from "../components/admin/AdminAlumni";
 import AdminAnnouncements from "../components/admin/AdminAnnouncements";
 import AdminDiscussions from "../components/admin/AdminDiscussions";
 import AdminOpportunities from "../components/admin/AdminOpportunities";
+import FacultyClubs from "../components/faculty/FacultyClubs";
 
 
 const IndexRouter = () => {
@@ -80,6 +81,7 @@ const IndexRouter = () => {
                     <Route path="/" element={<FacultyDashboard />} >
                         <Route path="" element={<FacultyHome />} />
                         <Route path="announcements" element={<FacultyAnnouncements />} />
+                        <Route path="clubs" element={<FacultyClubs />} />
                         <Route path="profile" element={<FacultyProfile />} />
                         <Route path="events" element={<FacultyEvents />} />
                         <Route path="discussions" element={<FacultyDiscussions />} />
